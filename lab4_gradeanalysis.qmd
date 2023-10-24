@@ -51,17 +51,24 @@ grades |>
 count_grp <- 
   grades |> 
   group_by(Group) |>
-  summarise(n = n())
+  summarise(count = n())
 knitr::kable(count_grp)
 ```
 # Question 6 
 
 ```{r}
-ggplot(count_grp, aes(x= Group, y =n ))+
+ggplot(count_grp, aes(x= Group, y = count ))+
   geom_point()
 ```
 
+# Question 7 
 
+```{r}
+grades |> 
+  filter(!is.na(Exam))|> 
+  group_by(Group, Exam)|> 
+  ggplot(aes(x = Exam))+ geom_bar(fill = `Group`)
+```
 
 
 
