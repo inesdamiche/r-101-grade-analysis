@@ -29,6 +29,20 @@ grades |>
   
 ```
 
+# Question 3
+```{r}
+ nb_na <- sum(is.na(grades$Exam))
+```
+
+`r nb_na` students did not take the final exam.
+
+# Question 4
+
+```{r}
+ggplot(grades, aes(x = Exam), is.na = FALSE)+ 
+  geom_bar()
+```
+
 
 
 
