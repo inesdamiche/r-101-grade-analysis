@@ -14,6 +14,7 @@ library(vroom)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+theme_set(theme_bw())
 ```
 
 # Question 1 
@@ -39,9 +40,36 @@ grades |>
 # Question 4
 
 ```{r}
-ggplot(grades, aes(x = Exam), is.na = FALSE)+ 
-  geom_bar()
+grades |> 
+  filter(!is.na(Exam))|> 
+  ggplot(aes(x = Exam), is.na = TRUE)+ geom_histogram()
 ```
+
+# Question 5 
+
+```{r}
+count_grp <- 
+  grades |> 
+  group_by(Group) |>
+  summarise(n = n())
+knitr::kable(count_grp)
+```
+# Question 6 
+
+```{r}
+ggplot(count_grp, aes(x= Group, y =n ))+
+  geom_point()
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
