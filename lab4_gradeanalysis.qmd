@@ -1,0 +1,10 @@
+---
+title: "Lab4 grade analysis"
+author: Damiche Inès
+format: html
+editor: visual
+---
+
+```{r}
+
+```
