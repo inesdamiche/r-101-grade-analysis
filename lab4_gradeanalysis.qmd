@@ -14,6 +14,7 @@ library(vroom)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(stringr)
 theme_set(theme_bw())
 ```
 
@@ -82,7 +83,12 @@ grades |>
 ## Method 2
 
 ```{r}
-
+grades |> 
+  filter(!is.na(Exam))|>
+  ggplot(aes(x = Exam))+
+  geom_bar()+
+  facet_wrap(~Group)
+  
 ```
 
 # Question 8 
@@ -91,7 +97,7 @@ group_na <-
   grades |>                                    
   group_by(Group) |>
   summarize(na_count = sum(is.na(Exam)))
-group_na               
+knitr::kable(group_na)               
 ```
 
 # Question 9 
@@ -104,12 +110,77 @@ ggplot(group_na, aes(x = Group, y = na_count))+ geom_col() + theme(axis.text.x=e
 ```{r}
 options(digits = 3)
 new_df <- 
-  select(grades, c(Id, Group, Exam, starts_with("MCQ"))) |>
-  pivot_longer(cols= c(Exam,starts_with("MCQ")), names_to = "name", values_to = "value")
+  pivot_longer(grades, cols= c(Exam, starts_with("MCQ"), starts_with("Online")), names_to = "name", values_to = "value")
   
 ```
 
 # Question 11
+
+```{r}
+na_student <- 
+  new_df |>
+  group_by(Id) |>
+  summarise(na_count = sum(is.na(value)))
+knitr::kable(na_student)
+```
+
+# Question 12
+
+```{r}
+ggplot(na_student, aes(x = Id, y = na_count)) + stat_bin_hex()
+```
+# Question 13 
+
+```{r}
+new_df |> 
+  filter(name == 'Exam') |>
+  group_by(Group) |>
+  summarize(na_count = sum(is.na(value))) |>
+  knitr::kable()
+  
+```
+
+
+# Question 14
+
+```{r}
+id_na_online <- 
+  new_df |> 
+  filter(str_starts(name, "Online")) |>
+  group_by(Id) |>
+  summarize(na_count = sum(is.na(value))) 
+knitr::kable(id_na_online)
+```
+# Question 15 
+
+```{r}
+# Step 1: I want to add a column to the previous table with the exam grade for each student 
+id_na_online |> 
+  
+
+
+# Step 2: When several students have the same number of NA, I take the mean of their grades 
+  group_by(na_count) |>
+  summarize(mean_exam_grade = mean(exam_grade))
+
+# Step 3: graph representation 
+
+
+```
+
+# Question 16 
+
+```{r}
+id_na_mcq <- 
+  new_df |> 
+  filter(str_starts(name, "MCQ")) |>
+  group_by(Id) |>
+  summarize(Missed = sum(is.na(value)))|>
+  mutate(Missed = case_when(Missed == 0 ~ FALSE, TRUE   ~ Missed ))|>
+  mutate(Missed = case_when(Missed != 0 ~ TRUE, TRUE   ~ Missed))
+
+knitr::kable(id_na_mcq)
+```
 
 
 
