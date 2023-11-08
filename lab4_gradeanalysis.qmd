@@ -43,6 +43,7 @@ grades |>
 # Question 4
 
 ```{r}
+#| message: FALSE
 grades |> 
   filter(!is.na(Exam))|> 
   ggplot(aes(x = Exam), is.na = TRUE)+ geom_histogram()
@@ -97,7 +98,6 @@ group_na <-
   grades |>                                    
   group_by(Group) |>
   summarize(na_count = sum(is.na(Exam)))
-knitr::kable(group_na)               
 ```
 
 # Question 9 
@@ -121,7 +121,6 @@ na_student <-
   new_df |>
   group_by(Id) |>
   summarise(na_count = sum(is.na(value)))
-knitr::kable(na_student)
 ```
 
 # Question 12
@@ -137,7 +136,6 @@ new_df |>
   group_by(Group) |>
   summarize(na_count = sum(is.na(value))) |>
   knitr::kable()
-  
 ```
 
 
@@ -149,21 +147,30 @@ id_na_online <-
   filter(str_starts(name, "Online")) |>
   group_by(Id) |>
   summarize(na_count = sum(is.na(value))) 
-knitr::kable(id_na_online)
 ```
 # Question 15 
 
 ```{r}
+#| message: FALSE
 # Step 1: I want to add a column to the previous table with the exam grade for each student 
-id_na_online |> 
+
+# I sort the grades data base to be able to take the Exam column and add it to the previous table in order to create a new table with all the information we need
+grades_arranged <- 
+  grades |>
+  arrange(Id)
+
+id_na_online_bis <- data_frame(id_na_online, exam_grade = grades_arranged$Exam)
   
 
-
 # Step 2: When several students have the same number of NA, I take the mean of their grades 
+id_na_online_bis |>
+  filter(!is.na(exam_grade))|>
   group_by(na_count) |>
-  summarize(mean_exam_grade = mean(exam_grade))
+  summarize(mean_exam_grade = mean(exam_grade))|>
+  # Step 3: graph representation 
+  ggplot(aes(x= na_count, y = mean_exam_grade)) + geom_point() 
 
-# Step 3: graph representation 
+
 
 
 ```
@@ -179,16 +186,11 @@ id_na_mcq <-
   mutate(Missed = case_when(Missed == 0 ~ FALSE, TRUE   ~ Missed ))|>
   mutate(Missed = case_when(Missed != 0 ~ TRUE, TRUE   ~ Missed))
 
-knitr::kable(id_na_mcq)
 ```
 
 # Question 17 
 
 ```{r}
-# I sort the grades data base to be able to take the Group column and add it to the previous table in order to create a new table with all the information we need
-grades_arranged <- 
-  grades |>
-  arrange(Id)
 
 # Creation of the new dataframe with the Id, the Group and Missed grades for each student 
 group_na_mcq <- data_frame(id_na_mcq, Group = grades_arranged$Group)
@@ -201,8 +203,6 @@ percentages <-
   select(-Id, -Missed)|> 
   distinct()
 
-knitr::kable(percentages)
-  
 ```
 
 # Question 18 
