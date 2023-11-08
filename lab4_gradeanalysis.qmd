@@ -182,7 +182,28 @@ id_na_mcq <-
 knitr::kable(id_na_mcq)
 ```
 
+# Question 17 
 
+```{r}
+# I sort the grades data base to be able to take the Group column and add it to the previous table in order to create a new table with all the information we need
+grades_arranged <- 
+  grades |>
+  arrange(Id)
+
+# Creation of the new dataframe with the Id, the Group and Missed grades for each student 
+group_na_mcq <- data_frame(id_na_mcq, Group = grades_arranged$Group)
+
+# Computing what was asked in the question 
+group_na_mcq |>
+  group_by(Group) |>
+  mutate(P_missed = sum(Missed)/length(Group))|>
+  knitr::kable()
+  
+
+  
+```
+
+ 
 
 
 
