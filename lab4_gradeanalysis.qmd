@@ -19,10 +19,12 @@ theme_set(theme_bw())
 
 # Question 1 
 ```{r}
+#| message: FALSE
 grades <- vroom(here("grades.csv"))
 ```
 # Question 2
 ```{r}
+#| message: FALSE
 grades |> 
   filter(!is.na(Exam))|> 
   summarise( min = min(Exam), max = max(Exam), median = median(Exam), mean = mean(Exam))|> 
@@ -57,26 +59,57 @@ knitr::kable(count_grp)
 # Question 6 
 
 ```{r}
-ggplot(count_grp, aes(x= Group, y = count ))+
-  geom_point()
+ggplot(count_grp, aes(x= Group, y = count))+
+  geom_point()+
+  theme(axis.text.x=element_text(size=4.5))
+  
 ```
 
 # Question 7 
 
+## Method 1 
 ```{r}
+#We take the average grade for each group
 grades |> 
-  filter(!is.na(Exam))|> 
-  group_by(Group, Exam)|> 
-  ggplot(aes(x = Exam))+ geom_bar(fill = `Group`)
+  group_by(Group) |>  
+  filter(!is.na(Exam))|>
+  summarise(mean = mean(Exam))|>
+  ggplot(aes(x= Group, y = mean)) + geom_point()+
+  theme(axis.text.x=element_text(size=4.5))
+
 ```
 
+## Method 2
 
+```{r}
 
+```
 
+# Question 8 
+```{r}
+group_na <- 
+  grades |>                                    
+  group_by(Group) |>
+  summarize(na_count = sum(is.na(Exam)))
+group_na               
+```
 
+# Question 9 
 
+```{r}
+ggplot(group_na, aes(x = Group, y = na_count))+ geom_col() + theme(axis.text.x=element_text(size=4.5))
+```
+# Question 10 
 
+```{r}
+options(digits = 3)
+new_df <- 
+  select(grades, c(Id, Group, Exam, starts_with("MCQ"))) |>
+  pivot_longer(cols= c(Exam,starts_with("MCQ")), names_to = "name", values_to = "value")
+  
+```
 
+# Question 11
 
 
 
