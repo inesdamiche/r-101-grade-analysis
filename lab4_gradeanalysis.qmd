@@ -199,8 +199,6 @@ group_na_mcq |>
   mutate(P_missed = sum(Missed)/length(Group))|>
   knitr::kable()
   
-
-  
 ```
 
  
