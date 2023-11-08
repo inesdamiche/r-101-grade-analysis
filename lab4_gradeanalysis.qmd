@@ -194,11 +194,32 @@ grades_arranged <-
 group_na_mcq <- data_frame(id_na_mcq, Group = grades_arranged$Group)
 
 # Computing what was asked in the question 
-group_na_mcq |>
+percentages <- 
+  group_na_mcq |>
   group_by(Group) |>
-  mutate(P_missed = sum(Missed)/length(Group))|>
-  knitr::kable()
+  mutate(P_missed = sum(Missed)/length(Group)) |>
+  select(-Id, -Missed)|> 
+  distinct()
+
+knitr::kable(percentages)
   
+```
+
+# Question 18 
+
+```{r}
+#Creating the table with the average grade per group 
+av_group <- 
+  grades |>
+  filter(!is.na(Exam))|>
+  group_by(Group) |>
+  summarise(mean_grade = mean(Exam))
+
+# Creating the table that will be used for the graph 
+table_graph <- inner_join(av_group, percentages)
+
+#Graph 
+ggplot(table_graph, aes(x= P_missed, y = mean_grade)) + geom_point()
 ```
 
  
